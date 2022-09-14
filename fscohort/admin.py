@@ -1,8 +1,16 @@
 from django.contrib import admin
-from .models import Product
+from .models import Product, Review
 from django.utils import timezone
 # Register your models here.
 # readonly_fields = ("bring_image",)
+
+class ReviewInline(admin.TabularInline):  # StackedInline farklı bir görünüm aynı iş
+    '''Tabular Inline View for '''
+    model = Review
+    extra = 1
+    classes = ('collapse',)
+    # min_num = 3
+    # max_num = 20
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("name", "create_date", "is_in_stock", "update_date", "added_days_ago")
@@ -11,6 +19,7 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug' : ('name',)}
     list_per_page = 15
     date_hierarchy = "update_date"
+    inlines = (ReviewInline,)
     
     actions = ("is_in_stock", )
 
@@ -24,6 +33,14 @@ class ProductAdmin(admin.ModelAdmin):
         
         fark = timezone.now() - product.create_date
         return fark.days 
+    
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'created_date', 'is_released')
+    list_per_page = 50
+    raw_id_fields = ('product',) 
+    
+
+admin.site.register(Review, ReviewAdmin)
 
 admin.site.register(Product, ProductAdmin)
 
