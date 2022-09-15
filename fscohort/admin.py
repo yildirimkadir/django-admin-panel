@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Product, Review, Category
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 # Register your models here.
 # readonly_fields = ("bring_image",)
 
@@ -13,7 +14,7 @@ class ReviewInline(admin.TabularInline):  # StackedInline farklı bir görünüm
     # max_num = 20
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "create_date", "is_in_stock", "update_date", "added_days_ago", "how_many_reviews")
+    list_display = ("name", "create_date", "is_in_stock", "update_date", "added_days_ago", "how_many_reviews", "bring_img_to_list")
     list_editable = ( "is_in_stock", )
     search_fields = ("name",)
     prepopulated_fields = {'slug' : ('name',)}
@@ -47,6 +48,12 @@ class ProductAdmin(admin.ModelAdmin):
         
         fark = timezone.now() - product.create_date
         return fark.days 
+    
+    def bring_img_to_list(self, obj):
+        if obj.product_img:
+            return mark_safe(f"<img src={obj.product_img.url} width=50 height=50></img>")
+        return mark_safe("******")
+    bring_img_to_list.short_description = "product_image"
     
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'created_date', 'is_released')
