@@ -20,6 +20,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 15
     date_hierarchy = "update_date"
     inlines = (ReviewInline,)
+    readonly_fields = ("bring_image",)
     fieldsets = (
         (None, {
             "fields": (
@@ -29,7 +30,7 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         ('Optionals Settings', {
             "classes" : ("collapse", ),
-            "fields" : ("description", "categories"),
+            "fields" : ("description", "categories", "product_img", "bring_image"),
             'description' : "You can use this section for optionals settings"
         })
     )
